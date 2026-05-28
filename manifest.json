@@ -1,8 +1,9 @@
 {
   "name": "Pollen Allergy Checker",
   "short_name": "pollen-aller",
-  "start_url": "/",
+  "start_url": "/pollen-allergy-checker/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#6366f1"
+  "theme_color": "#6366f1",
+  "scope": "/pollen-allergy-checker/"
 }
