@@ -69,8 +69,38 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
             .result-value { font-size: 28px; }
         }
         /* ── サービス固有CSS ── */
+        .quiz-opt { width:100%; padding:12px 14px; margin-bottom:8px; border:2px solid #e5e7eb; border-radius:10px; font-size:14px; cursor:pointer; background:#fff; text-align:left; transition:border-color .15s, background .15s; }
+        .quiz-opt:hover { border-color:#EA580C; background:#FFF7ED; }
+        .quiz-opt:active { transform:scale(0.99); background:#FFEDD5; }
+        .quiz-opt:focus-visible { outline:3px solid #EA580C; outline-offset:2px; }
 
-    
+        /* フェードアニメーション */
+        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        .fade-in { animation: fadeIn .25s ease both; }
+
+        /* 重症度メーター */
+        .severity-wrap { margin: 12px 0 16px; }
+        .severity-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:13px; font-weight:600; color:#555; }
+        .severity-pct { font-size:22px; font-weight:700; }
+        .severity-track { height:12px; background:#e5e7eb; border-radius:6px; overflow:hidden; }
+        .severity-fill { height:100%; border-radius:6px; transition:width 1s cubic-bezier(.4,0,.2,1); width:0; }
+        .severity-badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:700; color:white; margin-left:8px; }
+
+        /* アドバイスカード */
+        .advice-cards { display:grid; grid-template-columns:1fr; gap:10px; margin:14px 0; }
+        @media (min-width:600px) { .advice-cards { grid-template-columns:1fr 1fr 1fr; } }
+        .advice-card { border-radius:12px; padding:14px; background:#FFF7ED; border:1px solid #FFEDD5; }
+        .advice-card-icon { font-size:22px; margin-bottom:6px; }
+        .advice-card-title { font-size:13px; font-weight:700; color:#374151; margin-bottom:6px; }
+        .advice-card-text { font-size:12px; color:#4b5563; line-height:1.7; }
+
+        /* 結果シェア */
+        .result-share { background: linear-gradient(135deg,#FFEDD5,#FFF7ED); border-radius:12px; padding:14px; text-align:center; margin:12px 0; }
+        .result-share-title { font-size:13px; font-weight:600; color:#374151; margin-bottom:10px; }
+        .share-btns { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+        .share-btn-x { background:#1DA1F2; color:white; padding:8px 16px; border-radius:8px; font-size:13px; text-decoration:none; font-weight:600; min-height:44px; display:inline-flex; align-items:center; }
+        .share-btn-line { background:#00B900; color:white; padding:8px 16px; border-radius:8px; font-size:13px; text-decoration:none; font-weight:600; min-height:44px; display:inline-flex; align-items:center; }
+
 @media print{
   header,footer,nav,button,.no-print,
   [class*="share"],[class*="affiliate"],[id*="share"],
@@ -114,10 +144,30 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
           <div id="q-options" class="space-y-2"></div>
         </div>
         <div class="result" id="result">
-          <div class="card">
+          <div class="card fade-in" id="result-card">
             <h3 id="r-title" style="font-size:18px;font-weight:700;margin-bottom:8px;color:#EA580C;"></h3>
-            <p id="r-desc" style="color:#444;font-size:14px;line-height:1.7;"></p>
-            <button class="btn" style="margin-top:16px;" onclick="location.reload()">もう一度診断</button>
+            <!-- 重症度メーター -->
+            <div class="severity-wrap">
+              <div class="severity-header">
+                <span>重症度 <span id="r-badge" class="severity-badge"></span></span>
+                <span id="r-percent" class="severity-pct"></span>
+              </div>
+              <div class="severity-track">
+                <div id="r-bar" class="severity-fill"></div>
+              </div>
+            </div>
+            <p id="r-desc" style="color:#444;font-size:14px;line-height:1.7;margin-bottom:14px;"></p>
+            <!-- アドバイスカード -->
+            <div id="r-cards" class="advice-cards"></div>
+            <!-- 結果シェアボタン -->
+            <div class="result-share">
+              <p class="result-share-title">📣 この結果をシェアする</p>
+              <div class="share-btns">
+                <a id="r-share-x" href="#" target="_blank" rel="noopener" aria-label="Xでシェア" class="share-btn-x">𝕏 シェア</a>
+                <a id="r-share-line" href="#" target="_blank" rel="noopener" aria-label="LINEでシェア" class="share-btn-line">LINE</a>
+              </div>
+            </div>
+            <button class="btn" style="margin-top:4px;" onclick="restartQuiz()">もう一度診断する</button>
           </div>
         </div>
 
@@ -188,8 +238,8 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
         </div>
     </main>
 
-    <footer style="text-align:center;padding:20px;color:white;font-size:12px;opacity:0.75;margin-top:8px;">
-        <p><a href="https://appadaycreator.github.io/" style="color:white;">AppADayCreator</a>
+    <footer style="text-align:center;padding:20px;color:white;font-size:12px;background:#374151;margin-top:8px;">
+        <p><a href="https://appadaycreator.com/" style="color:white;">AppADayCreator</a>
         | <a href="privacy-policy.html" style="color:white;">プライバシーポリシー</a>
         | <a href="terms.html" style="color:white;">利用規約</a>
         | <a href="contact.html" style="color:white;">お問い合わせ</a></p>
@@ -198,42 +248,152 @@ j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src=
     </footer>
 
     <script>
-    // ★ここだけ実装（約15行）★
     const QUESTIONS = [
-      { text:'Q1. くしゃみ・鼻水の症状は？', opts:['ほぼない','軽度','中度・外出が辛い','重度・日常生活に支障'] },
+      { text:'Q1. くしゃみ・鼻水の症状は？', opts:['ほぼない','軽度（少し出る）','中度（外出が辛い）','重度（日常生活に支障）'] },
       { text:'Q2. 目のかゆみ・充血は？', opts:['ほぼない','少し気になる','かなり辛い','目薬が手放せない'] },
       { text:'Q3. 飛散期間中の対策は？', opts:['何もしていない','マスクのみ','薬＋マスク','複数の対策をしている'] },
       { text:'Q4. 現在の薬の使用は？', opts:['使っていない','市販薬を使う','処方薬がある','効果が薄くなってきた'] },
       { text:'Q5. 空気清浄機の使用は？', opts:['持っていない','古い機種','HEPAフィルター付き','最新機種'] },
     ];
+
     function getResult(answers) {
-      const nose = answers[0].idx;   // くしゃみ・鼻水
-      const eye = answers[1].idx;    // 目のかゆみ
-      const medicine = answers[3].idx; // 薬
+      const nose = answers[0].idx;
+      const eye = answers[1].idx;
+      const medicine = answers[3].idx;
       const score = nose + eye + (medicine === 3 ? 3 : 0);
-      if (medicine === 3 || score >= 5) return { title:'💊 薬が効きにくいタイプ', desc:'現在の薬の効果が落ちてきた場合は、薬の種類を見直す必要があります。抗ヒスタミン薬の切り替え・点鼻薬の追加・舌下免疫療法の検討を専門医に相談しましょう。HEPAフィルター付き空気清浄機の導入も有効です。' };
-      if (nose >= 3 || eye >= 3 || score >= 4) return { title:'🏥 重症タイプ', desc:'症状が重く、日常生活に影響が出ています。アレルギー専門医（耳鼻科・アレルギー科）への受診を強くおすすめします。舌下免疫療法（根本治療）も選択肢に入れて相談してみましょう。' };
-      if (nose >= 2 || eye >= 2) return { title:'⚠️ 中症タイプ', desc:'症状が中程度あります。市販薬だけでなく耳鼻科への受診と処方薬を検討する時期です。初期療法（花粉飛散前からの服薬）を取り入れると症状を大幅に軽減できます。' };
-      return { title:'🌿 軽症タイプ', desc:'症状は軽めです。不織布マスク・花粉対策メガネ・外出後の洗顔・うがいを徹底しましょう。市販の抗ヒスタミン薬でシーズン中は対応できる可能性が高いです。' };
+      const severity = Math.min(100, Math.round(((nose + eye + medicine) / 9) * 100));
+
+      if (medicine === 3 || score >= 5) return {
+        title: '💊 薬が効きにくいタイプ',
+        severity: Math.max(80, severity),
+        severityLabel: '要受診',
+        severityColor: '#DC2626',
+        desc: '現在使用中の薬の効果が弱まっている可能性があります。薬の種類の見直しや根本治療の選択肢を専門医に相談しましょう。',
+        cards: [
+          { icon:'💊', title:'薬の見直し', text:'抗ヒスタミン薬の切り替え（第2世代）・点鼻ステロイドの追加が有効です。根本治療として舌下免疫療法（アレルゲン免疫療法）も選択肢に。耳鼻科・アレルギー科への受診を強くおすすめします。' },
+          { icon:'😷', title:'マスク・物理対策', text:'DS2規格の高性能マスクと花粉対策メガネ（シールドタイプ）を着用しましょう。帰宅時は玄関前でコートをはたき、すぐに洗顔・うがい・着替えを行ってください。' },
+          { icon:'🌀', title:'空気清浄機・室内対策', text:'HEPAフィルター搭載の空気清浄機を寝室に設置しましょう。換気は雨の日・夜間に限定し、布団の外干しは避けて乾燥機を使用するのがおすすめです。' },
+        ],
+      };
+      if (nose >= 3 || eye >= 3 || score >= 4) return {
+        title: '🏥 重症タイプ',
+        severity: Math.max(65, severity),
+        severityLabel: '重症',
+        severityColor: '#EA580C',
+        desc: '症状が重く、日常生活への影響が出ています。セルフケアだけでは限界があるため、アレルギー専門医への受診をおすすめします。',
+        cards: [
+          { icon:'💊', title:'薬の選び方', text:'第2世代抗ヒスタミン薬（アレグラ・クラリチン等）と点鼻ステロイドの併用が効果的です。花粉飛散2週間前から服用開始する「初期療法」で重症化を防げます。耳鼻科で処方を受けましょう。' },
+          { icon:'😷', title:'マスク・物理対策', text:'DS2等の高性能マスク＋花粉対策メガネを必ず着用。ポリエステル素材の衣類は花粉が付きにくくおすすめです。帰宅後すぐに顔・手洗いを徹底してください。' },
+          { icon:'🌀', title:'室内環境対策', text:'HEPAフィルター付き空気清浄機を寝室と居間に各1台配置が理想です。掃除はモップ中心で花粉の舞い上がりを防ぎ、布団は乾燥機で対応しましょう。' },
+        ],
+      };
+      if (nose >= 2 || eye >= 2) return {
+        title: '⚠️ 中症タイプ',
+        severity: Math.max(40, severity),
+        severityLabel: '中症',
+        severityColor: '#D97706',
+        desc: '症状が中程度あります。市販薬と物理対策を組み合わせて、早めにケアを始めましょう。症状が続く場合は耳鼻科への受診も検討してください。',
+        cards: [
+          { icon:'💊', title:'薬の選び方', text:'眠くなりにくい第2世代抗ヒスタミン薬（アレグラFX・アレジオン等）がおすすめです。症状が続く場合は耳鼻科を受診し、点鼻薬の追加処方をもらうと効果的です。' },
+          { icon:'😷', title:'マスク・物理対策', text:'不織布マスクの外側に花粉スプレーをかけると捕集率が上がります。目の症状が強い方は花粉症用眼鏡も有効です。外出後の洗顔・うがいを習慣化しましょう。' },
+          { icon:'🌀', title:'室内環境対策', text:'リビングや寝室にHEPAフィルター付き空気清浄機を1台置くと室内花粉量が大幅に減ります。洗濯物の外干しを避け、飛散量が多い晴れた午後の外出を控えましょう。' },
+        ],
+      };
+      return {
+        title: '🌿 軽症タイプ',
+        severity: Math.max(10, severity),
+        severityLabel: '軽症',
+        severityColor: '#16A34A',
+        desc: '症状は軽めです。基本的なセルフケアを継続することで快適に過ごせます。飛散量が多い日は対策を強化しましょう。',
+        cards: [
+          { icon:'💊', title:'薬の選び方', text:'症状が出始めたら市販の抗ヒスタミン薬（アレグラFX・クラリチンEX等）を早めに服用しましょう。症状が軽い場合は点眼薬・点鼻薬のみで対応できることもあります。' },
+          { icon:'😷', title:'マスク・物理対策', text:'飛散量が多い日（晴れた乾いた日の午後）だけ不織布マスクを着用。外出後の洗顔・うがい・着替えを習慣化すると症状が悪化しにくくなります。' },
+          { icon:'🌀', title:'室内環境対策', text:'空気清浄機がなくても、雨の日や夜間のこまめな換気と掃除で対応できます。フローリングはカーペットより花粉が溜まりにくく清潔を保てます。' },
+        ],
+      };
     }
-    // ★以下変更不要★
-    const BTN='#EA580C'; let cur=0; const ans=[];
-    document.addEventListener('DOMContentLoaded',()=>{ document.getElementById('q-total').textContent=QUESTIONS.length; });
-    function startQuiz(){ cur=0;ans.length=0; document.getElementById('quiz-start').style.display='none'; document.getElementById('quiz-area').style.display='block'; document.getElementById('result').classList.remove('show'); renderQ(); }
-    function renderQ(){
-      const q=QUESTIONS[cur];
-      document.getElementById('q-num').textContent=cur+1;
-      document.getElementById('q-bar').style.width=((cur+1)/QUESTIONS.length*100)+'%';
-      document.getElementById('q-text').textContent=q.text;
-      document.getElementById('q-options').innerHTML=q.opts.map((o,i)=>`<button onclick="answer(${i})" style="width:100%;padding:12px;margin-bottom:8px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;cursor:pointer;background:#fff;text-align:left;">${o}</button>`).join('');
+
+    let cur = 0;
+    const ans = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('q-total').textContent = QUESTIONS.length;
+    });
+
+    function startQuiz() {
+      cur = 0; ans.length = 0;
+      document.getElementById('quiz-start').style.display = 'none';
+      document.getElementById('quiz-area').style.display = 'block';
+      document.getElementById('result').classList.remove('show');
+      renderQ();
     }
-    function answer(idx){ ans.push({idx}); cur++; if(cur>=QUESTIONS.length) showResult(); else renderQ(); }
-    function showResult(){
-      document.getElementById('quiz-area').style.display='none';
-      const r=getResult(ans);
-      document.getElementById('r-title').textContent=r.title;
-      document.getElementById('r-desc').textContent=r.desc;
-      document.getElementById('result').classList.add('show');
+
+    function renderQ() {
+      const q = QUESTIONS[cur];
+      const area = document.getElementById('quiz-area');
+      area.classList.remove('fade-in');
+      void area.offsetWidth;
+      area.classList.add('fade-in');
+      document.getElementById('q-num').textContent = cur + 1;
+      document.getElementById('q-bar').style.width = ((cur + 1) / QUESTIONS.length * 100) + '%';
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('q-options').innerHTML = q.opts.map((o, i) =>
+        `<button class="quiz-opt" onclick="answer(${i})">${o}</button>`
+      ).join('');
+    }
+
+    function answer(idx) {
+      ans.push({ idx });
+      cur++;
+      if (cur >= QUESTIONS.length) showResult();
+      else setTimeout(renderQ, 80);
+    }
+
+    function showResult() {
+      document.getElementById('quiz-area').style.display = 'none';
+      const r = getResult(ans);
+
+      document.getElementById('r-title').textContent = r.title;
+      document.getElementById('r-desc').textContent = r.desc;
+
+      // 重症度メーター
+      const badge = document.getElementById('r-badge');
+      badge.textContent = r.severityLabel;
+      badge.style.background = r.severityColor;
+      document.getElementById('r-percent').textContent = r.severity + '%';
+      document.getElementById('r-percent').style.color = r.severityColor;
+      const fill = document.getElementById('r-bar');
+      fill.style.background = r.severityColor;
+      setTimeout(() => { fill.style.width = r.severity + '%'; }, 100);
+
+      // アドバイスカード
+      document.getElementById('r-cards').innerHTML = r.cards.map(c => `
+        <div class="advice-card">
+          <div class="advice-card-icon">${c.icon}</div>
+          <div class="advice-card-title">${c.title}</div>
+          <div class="advice-card-text">${c.text}</div>
+        </div>
+      `).join('');
+
+      // シェアボタンに結果タイプを含める
+      const shareText = encodeURIComponent(`私の花粉症タイプは「${r.title.replace(/[💊🏥⚠️🌿]/g, '').trim()}」でした！あなたも無料診断してみて`);
+      const shareUrl = encodeURIComponent('https://appadaycreator.com/pollen-allergy-checker/');
+      document.getElementById('r-share-x').href =
+        `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}&hashtags=花粉症対策`;
+      document.getElementById('r-share-line').href =
+        `https://line.me/R/msg/text/?${shareText}%0A${shareUrl}`;
+
+      const resultEl = document.getElementById('result');
+      resultEl.classList.add('show');
+      const card = document.getElementById('result-card');
+      card.classList.remove('fade-in');
+      void card.offsetWidth;
+      card.classList.add('fade-in');
+    }
+
+    function restartQuiz() {
+      document.getElementById('result').classList.remove('show');
+      document.getElementById('quiz-start').style.display = 'block';
     }
     </script>
 </body>
